@@ -11,7 +11,7 @@
 <script>
 import { ref } from 'vue'
 import { auth } from '../firebase/config';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 export default {
     //vue 3 composition api
     setup(){
@@ -28,7 +28,12 @@ export default {
             if(!response){
               throw new Error("could not create new user");
             }
-            console.log(response.user)
+        // Update the user's display name
+           await updateProfile(response.user, {
+          displayName: displayName.value
+        });
+
+        console.log(response.user);
             
           } catch(err){
             error.value = err.message;
