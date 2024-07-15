@@ -10,40 +10,22 @@
 
 <script>
 import { ref } from 'vue'
-import { auth } from '../firebase/config';
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import useSignup from '../composables/useSignup';
+
 export default {
     //vue 3 composition api
     setup(){
         let displayName = ref("");
         let email = ref("");
         let password = ref("");
-        let error = ref(null); // this email address is already in use by another account
+          let  { error, createAccount } = useSignup();
         let signUp =async()=>{
-       
-          try{
-            const response = await createUserWithEmailAndPassword(auth, email.value, password.value);
-
-          // console.log(response)
-            if(!response){
-              throw new Error("could not create new user");
-            }
-        // Update the user's display name
-           await updateProfile(response.user, {
-          displayName: displayName.value
-        });
-
-        console.log(response.user);
-            
-          } catch(err){
-            error.value = err.message;
-           console.log(error.value)
-          }
-        
+          let response=await createAccount(email.value,password.value,displayName.value);
+          console.log(response.user);
         }
 
 
-        return {displayName,email,password, signUp};
+        return {displayName,email,password, signUp , error};
     }
 }
 </script>
